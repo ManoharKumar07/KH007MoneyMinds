@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import styled from "styled-components";
 import bg from "./img/bg.png";
 import { MainLayout } from "./styles/Layouts";
-// import Orb from "./Components/Orb/Orb";
+import Orb from "./Components/Orb/Orb";
 import Navigation from "./Components/Navigation/Navigation";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import Income from "./Components/Income/Income";
@@ -31,9 +31,9 @@ function App() {
     }
   };
 
-  // const orbMemo = useMemo(() => {
-  //   return <Orb />;
-  // }, []);
+  const orbMemo = useMemo(() => {
+    return <Orb />;
+  }, []);
 
   return (
     <AppStyled bg={bg} className="App">
