@@ -263,6 +263,33 @@ const getSpecific = async (req, res) => {
   }
 };
 
+const openRosca = async (req, res) => {
+  try {
+    const { id: roscaId } = req.params;
+
+    const rosca = await roscaModel.findById(roscaId);
+
+    // Check if the Rosca exists
+    if (!rosca) {
+      return res.status(404).json({
+        success: false,
+        message: "Rosca not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      rosca,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 module.exports = getallRosca;
 
 module.exports = {
@@ -274,4 +301,5 @@ module.exports = {
   getallRosca,
   joinRosca,
   getSpecific,
+  openRosca,
 };

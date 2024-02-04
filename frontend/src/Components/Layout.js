@@ -19,34 +19,35 @@ import Createtab from "./Createtab";
 import Abouttab from "./Abouttab";
 import Complainttab from "./Complainttab";
 import axios from "axios";
+import OpenRosca from "./OpenRosca";
+
+const RoscaSymbol = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 2px solid #333;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  margin-left: 65px;
+  margin-top: 20px;
+`;
+
+const RoscaName = styled.div`
+  padding: 10px;
+  margin: 20px 0;
+  border-bottom: 2px solid var(--primary-color2);
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+`;
 
 const Layout = () => {
-  const RoscaSymbol = styled.div`
-    width: 50px;
-    height: 50px;
-    border: 2px solid #333;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    margin-left: 65px;
-    margin-top: 20px;
-  `;
-
-  const RoscaName = styled.div`
-    padding: 10px;
-    margin: 20px 0;
-    border-bottom: 2px solid var(--primary-color2);
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #e0e0e0;
-    }
-  `;
-
   const [tab, setTab] = useState(1);
   const { user } = useSelector((state) => state.user);
   const [roscas, setRoscas] = useState([]);
@@ -86,6 +87,8 @@ const Layout = () => {
         return <Abouttab />;
       case 4:
         return <Complainttab />;
+      case 5:
+        return <OpenRosca tab={tab} setTab={setTab} />;
       default:
         return <Hometab />;
     }
@@ -100,7 +103,9 @@ const Layout = () => {
 
             {roscas &&
               roscas.map((rosca, index) => (
-                <RoscaName key={rosca._id}>{rosca.roscaName}</RoscaName>
+                <RoscaName key={rosca._id} onClick={() => setTab(5)}>
+                  {rosca.roscaName}
+                </RoscaName>
               ))}
           </SidebarContainer>
           <ContentContainer>

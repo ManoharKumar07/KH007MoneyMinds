@@ -8,6 +8,7 @@ const {
   getallRosca,
   joinRosca,
   getSpecific,
+  openRosca,
 } = require("../controllers/userCtrl");
 const authMiddleware = require("../middlewares/authMiddleware");
 //router object
@@ -32,5 +33,7 @@ router.post("/getallrosca", getallRosca);
 router.post("/join", authMiddleware, joinRosca);
 
 router.post("/getspecific", authMiddleware, getSpecific);
+
+router.post("/openrosca/:id", openRosca);
 
 module.exports = router;
