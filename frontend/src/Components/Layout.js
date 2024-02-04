@@ -14,18 +14,17 @@ import {
 } from "../styles/LayoutStyles";
 import { useSelector } from "react-redux";
 import { Badge, Tabs } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
 import Hometab from "./Hometab";
 import Createtab from "./Createtab";
 import Abouttab from "./Abouttab";
 import Complainttab from "./Complainttab";
 import axios from "axios";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const RoscaSymbol = styled.div`
-    width: 50px; /* Adjust the width as needed */
-    height: 50px; /* Adjust the height as needed */
-    border: 2px solid #333; /* Add a border for distinction */
+    width: 50px;
+    height: 50px;
+    border: 2px solid #333;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -38,7 +37,7 @@ const Layout = ({ children }) => {
   const RoscaName = styled.div`
     padding: 10px;
     margin: 20px 0;
-    border-bottom:2px solid var(--primary-color2)
+    border-bottom: 2px solid var(--primary-color2);
     background-color: #f0f0f0;
     border-radius: 5px;
     cursor: pointer;
@@ -50,22 +49,27 @@ const Layout = ({ children }) => {
 
   const [tab, setTab] = useState(1);
   const { user } = useSelector((state) => state.user);
-  const location = useLocation();
-  const navigate = useNavigate();
   const [roscas, setRoscas] = useState([]);
 
   useEffect(() => {
-    // Fetch the list of all roscas from the backend on component mount
+    // Fetch the list of user-specific roscas
     const fetchRoscas = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/v1/user/getallrosca"
+          "http://localhost:8080/api/v1/user/getspecific",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
+
         if (response.data.success) {
-          setRoscas(response.data.roscas);
+          setRoscas(response.data.userRoscas);
         }
       } catch (error) {
-        console.error("Error fetching roscas:", error);
+        console.error("Error fetching user roscas:", error);
       }
     };
 
@@ -93,10 +97,11 @@ const Layout = ({ children }) => {
         <LayoutContainer>
           <SidebarContainer>
             <RoscaSymbol>{rosca}</RoscaSymbol>
-            {/* Display the names of all roscas with the new styled component */}
-            {roscas.map((rosca, index) => (
-              <RoscaName key={rosca._id}>{rosca.roscaName}</RoscaName>
-            ))}
+
+            {roscas &&
+              roscas.map((rosca, index) => (
+                <RoscaName key={rosca._id}>{rosca.roscaName}</RoscaName>
+              ))}
           </SidebarContainer>
           <ContentContainer>
             <HeaderContainer>
@@ -115,7 +120,7 @@ const Layout = ({ children }) => {
               <Tabs.TabPane tab="Home" key={1} />
               <Tabs.TabPane tab="Create" key={2} />
               <Tabs.TabPane tab="About" key={3} />
-              <Tabs.TabPane tab="Complaint" key={4} />
+              <Tabs.TabPane tab="Raise a Complaint" key={4} />
             </Tabs>
             <BodyContainer>{displayData()}</BodyContainer>
           </ContentContainer>

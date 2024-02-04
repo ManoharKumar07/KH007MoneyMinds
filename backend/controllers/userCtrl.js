@@ -2,7 +2,6 @@ const userModel = require("../models/userModels");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const roscaModel = require("../models/Roscamodel");
-// const moment = require("moment");
 
 //register callback
 const registerController = async (req, res) => {
@@ -168,7 +167,7 @@ const createRosca = async (req, res) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Failed to create Rosca",
       error: error.message,
     });
   }
@@ -201,6 +200,69 @@ const getallRosca = async (req, res) => {
   }
 };
 
+const joinRosca = async (req, res) => {
+  try {
+    const { id: roscaId } = req.body; // Assuming the Rosca ID is passed as req.body.id
+
+    // Fetch the specific Rosca by ID
+    const rosca = await roscaModel.findById(roscaId);
+
+    // Check if the Rosca exists
+    if (!rosca) {
+      return res.status(404).json({
+        success: false,
+        message: "Rosca not found.",
+      });
+    }
+
+    rosca.members.push({
+      name: req.userData.id,
+      payment: false,
+    });
+
+    // Save the updated Rosca
+    await rosca.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User joined Rosca successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+const getSpecific = async (req, res) => {
+  try {
+    const userId = req.userData.id;
+
+    // Fetch only the Roscas in which the user has participated
+    const userRoscas = await roscaModel.find({ "members.name": userId });
+
+    // Check if the user has not participated in any Roscas
+    if (userRoscas.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User has not participated in any Roscas.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      userRoscas: userRoscas,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 module.exports = getallRosca;
 
 module.exports = {
@@ -210,4 +272,6 @@ module.exports = {
   updatefund,
   createRosca,
   getallRosca,
+  joinRosca,
+  getSpecific,
 };
